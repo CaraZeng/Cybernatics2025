@@ -11,20 +11,28 @@ window.addEventListener('DOMContentLoaded', () => {
       window.keystrokeLogger.logKeydown(e);
     });
 
-  textarea.addEventListener('paste', (e) => {
-    e.preventDefault();
-    
-    const text = e.clipboardData?.getData('text') || '';
-    
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const currentValue = textarea.value;
-    
-    textarea.value = currentValue.substring(0, start) + text + currentValue.substring(end);
-    textarea.selectionStart = textarea.selectionEnd = start + text.length;
-    
-    window.keystrokeLogger.logPaste(e);
-  });
+    textarea.addEventListener('paste', (e) => {
+      e.preventDefault();
+      
+      const text = e.clipboardData?.getData('text') || '';
+      
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const currentValue = textarea.value;
+      
+      textarea.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+      textarea.selectionStart = textarea.selectionEnd = start + text.length;
+      
+      window.keystrokeLogger.logPaste(e);
+    });
+
+    const form = document.querySelector('#query-form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        const sqlContent = textarea.value;
+        window.keystrokeLogger.logQuerySubmit(sqlContent);
+      });
+    }
 
     console.log('Event listeners attached to SQL textarea');
   } else {
@@ -499,6 +507,15 @@ function displayError (queryWrapper, message) {
   errorElement.textContent = message
   errorElement.style.color = 'red'
   queryWrapper.appendChild(errorElement)
+
+  // record errors to keystrokeLogger
+  if (window.keystrokeLogger) {
+    const errorType = message.includes('Syntax') ? 'syntax_error' : 
+                    message.includes('no such table') ? 'schema_error' :
+                      'semantic_error';
+    window.keystrokeLogger.logError(message, errorType);
+  }
+
   scrollToBottom()
 }
 
