@@ -1,3 +1,37 @@
+if (typeof KeystrokeLogger !== 'undefined' && !window.keystrokeLogger) {
+  window.keystrokeLogger = new KeystrokeLogger();
+  console.log('KeystrokeLogger initialized from main.js');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const textarea = document.querySelector('#query-textarea');
+
+  if (textarea && window.keystrokeLogger) {
+    textarea.addEventListener('keydown', (e) => {
+      window.keystrokeLogger.logKeydown(e);
+    });
+
+  textarea.addEventListener('paste', (e) => {
+    e.preventDefault();
+    
+    const text = e.clipboardData?.getData('text') || '';
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const currentValue = textarea.value;
+    
+    textarea.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+    textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    
+    window.keystrokeLogger.logPaste(e);
+  });
+
+    console.log('Event listeners attached to SQL textarea');
+  } else {
+    console.error('Textarea or keystrokelogger not found');
+  }
+});
+
 /* global initSqlJs */
 const textarea = document.querySelector('#query-textarea')
 const displayText = document.querySelector('.display-text')
