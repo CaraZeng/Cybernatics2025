@@ -22,6 +22,10 @@ class KeystrokeLogger {
         if (this.lastKeystrokeTime !== null) {
             eventData.inter_keystroke_latency = now - this.lastKeystrokeTime;
         }
+        if (this.lastErrorTime !== null) {
+            eventData.post_error_latency = now - this.lastErrorTime;
+            this.lastErrorTime = null;
+        }
         
         this.events.push(eventData);
         this.lastKeystrokeTime = now;
