@@ -24,15 +24,7 @@ window.addEventListener('DOMContentLoaded', () => {
       textarea.selectionStart = textarea.selectionEnd = start + text.length;
       
       window.keystrokeLogger.logPaste(e);
-    });
-
-    const form = document.querySelector('#query-form');
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        const sqlContent = textarea.value;
-        window.keystrokeLogger.logQuerySubmit(sqlContent);
-      });
-    }
+    }); 
 
     console.log('Event listeners attached to SQL textarea');
   } else {
@@ -359,7 +351,15 @@ form.addEventListener('submit', function (event) {
 
   // add push to database over here
   submitUserData(localStorage.getItem('user'), currentQueryIndex, timeElapsed, hintsUsed,x,flag,score)
+
+if (window.keystrokeLogger) {
+  const events = window.keystrokeLogger.getEvents();
+  const calculator = new FeatureCalculator(events);
+  const features = calculator.calculateFeatures();
+  console.log('=== Calculated features ===', features);
+  }
 })
+
 let hintsUsed =0;
 function getHint () {
   const hintIndex = currentQueryIndex
