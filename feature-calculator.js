@@ -1,5 +1,5 @@
 class FeatureCalculator {
-    constructor(events) {
+    constructor(events, questionStartTime) {
         this.events = events;
         this.questionStartTime = questionStartTime;
     }
