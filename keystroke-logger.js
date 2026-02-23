@@ -4,6 +4,7 @@ class KeystrokeLogger {
         this.lastKeystrokeTime = null;
         this.lastErrorTime = null;
         this.attemptNumber = 0;
+        this.questionStartTime = Date.now();
     }
 
     logKeydown(event) {
@@ -97,6 +98,7 @@ class KeystrokeLogger {
         this.lastKeystrokeTime = null;
         this.lastErrorTime = null;
         this.attemptNumber = 0;
+        this.questionStartTime = Date.now();
     }
 }
 
