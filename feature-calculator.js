@@ -1,6 +1,7 @@
 class FeatureCalculator {
     constructor(events) {
         this.events = events;
+        this.questionStartTime = questionStartTime;
     }
 
     calculateFeatures() {
@@ -11,6 +12,10 @@ class FeatureCalculator {
             pause_count: this.calculatePauseCount(),
             backspace_frequency: this.calculateBackspaceFrequency(),
             error_repetition_count: this.calculateErrorRepetitionCount(),
+            paste_frequency: this.calculatePasteFrequency(),
+            rapid_resubmission: this.calculateRapidResubmission(),
+            time_to_first_keystroke: this.calculateTimeToFirstKeystroke(),
+
             total_events: this.events.length
         };
     }
@@ -88,4 +93,42 @@ class FeatureCalculator {
         }
         return repetitionCount;
     }
+
+    calculatePasteFrequency() {
+        const pasteEvents = this.events.filter(e => e.event_type === 'paste');
+
+        return pasteEvents.length;
+    }
+
+    calculateRapidResubmission() {
+        const submitEvents = this.events.filter(e => e.event_type === 'query_submit');
+
+        if (submitEvents.length < 2) return 0;
+
+        let rapidCount = 0;
+        for (let i = 1; i < submitEvents.length; i++) {
+            const prevTime = new Date(submitEvents[i - 1].timestamp).getTime();
+            const currTime = new Date(submitEvents[i].timestamp).getTime();
+
+            const timeDiff = currTime - prevTime;
+
+            if (timeDiff < 5000) {
+                rapidCount++;
+            }
+        }
+        return rapidCount;
+    }
+
+    calculateTimeToFirstKeystroke() {
+        const firstKeystroke = this.events.find(e => e.event_type === 'keydown');
+
+        if(!firstKeystroke) return 0;
+
+        const firstKeystrokeTime = new Date(firstKeystroke.timestamp).getTime();
+        const delay = firstKeystrokeTime - this.questionStartTime;
+
+        return delay;
+    }
+
+
 }
