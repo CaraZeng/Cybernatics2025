@@ -354,7 +354,7 @@ form.addEventListener('submit', function (event) {
 
 if (window.keystrokeLogger) {
   const events = window.keystrokeLogger.getEvents();
-  const calculator = new FeatureCalculator(events);
+  const calculator = new FeatureCalculator(events, window.keystrokeLogger.questionStartTime);
   const features = calculator.calculateFeatures();
   console.log('=== Calculated features ===', features);
   }
